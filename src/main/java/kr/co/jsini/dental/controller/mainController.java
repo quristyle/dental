@@ -24,4 +24,6 @@ public class mainController {
 		return "content/index";
 	}
 
+	
+
 }
