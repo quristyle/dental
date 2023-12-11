@@ -24,7 +24,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import kr.co.jsini.dental.dto.proc_info;
+import kr.co.jsini.dental.dto.ApiInfo;
+import kr.co.jsini.dental.dto.ProcInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,7 +35,9 @@ public class ApiService {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  List<proc_info> getCallProcName( Map<String, String> params, String procName ){
+  ApiInfo getCallProcName( Map<String, String> params ){
+
+    ApiInfo apiinfo = new ApiInfo();
 
     // 프로시저명과 파라미터 구하기.
     String pname = params.get("p"); // 프로시저 명
@@ -44,7 +47,7 @@ public class ApiService {
 		String m_packageName = "p_"+pnames[1] ;
 		String m_procedureName = ""+pnames[2] ;
 
-		procName = "CALL "+ m_schemaName +"."+m_packageName +"_"+ m_procedureName+"( " ;
+		String procName = "CALL "+ m_schemaName +"."+m_packageName +"_"+ m_procedureName+"( " ;
 
     
     String query = " "
@@ -64,10 +67,10 @@ public class ApiService {
     +"	  and a.specific_name ~ ('(\\m' || ? || '_\\d{1,})')"
     ;
 
-    List<proc_info> list = jdbcTemplate.query(query, new BeanPropertyRowMapper(proc_info.class), m_packageName+"_"+m_procedureName);
+    List<ProcInfo> list = jdbcTemplate.query(query, new BeanPropertyRowMapper(ProcInfo.class), m_packageName+"_"+m_procedureName);
 
     String aguments = "";
-    for(proc_info pi : list){
+    for(ProcInfo pi : list){
       pi.setBindValue( params.get(pi.getArgument_name()) ); 
 				if( aguments.trim().equals("")){
 					aguments += " ?";
@@ -78,7 +81,15 @@ public class ApiService {
     }
 
 	  procName += aguments+ " )" ;
-    return list;
+
+    apiinfo.setScima_name(m_schemaName);
+    apiinfo.setPackage_name(m_packageName);
+    apiinfo.setProcedule_name(m_procedureName);
+
+    apiinfo.setProceStr(procName);
+    apiinfo.setPis(list);
+
+    return apiinfo;
   }
 
   public JsonObject getProjectInfo(Map<String, String> params) {
@@ -89,9 +100,8 @@ public class ApiService {
     String errMsgDesc = "";
 
     // 프로시저명과 파라미터 구하기.
-    String m_procName =null;
     JsonObject jo = new JsonObject();
-    List<proc_info> list = getCallProcName(params, m_procName);
+    ApiInfo apiInfo = getCallProcName(params );
     // String pname = params.get("p"); // 프로시저 명
     // String[] pnames = pname.split("\\.");
 
@@ -151,7 +161,7 @@ public class ApiService {
 
 */
 
-    Connection con = null;
+Connection con = null;
 CallableStatement cc = null;
 ResultSet rs = null;
 
@@ -159,42 +169,39 @@ String sess_userid = "";
 String sess_id = "";
 
 try{
-     con = jdbcTemplate.getDataSource().getConnection();
-     con.setAutoCommit(false);
+  con = jdbcTemplate.getDataSource().getConnection();
+  con.setAutoCommit(false);
 
-     log.info(" prepareCall : {}", m_procName);
- cc = con.prepareCall(m_procName);
+  log.info("prepareCall : {}", apiInfo.getProceStr());
+  cc = con.prepareCall(apiInfo.getProceStr());
 
- int i = 0;
- for(proc_info p : list){
+  int i = 0;
+ for(ProcInfo p : apiInfo.getPis()){
   if( p.getIn_out().equals("INOUT")){
-    p.setCc_seq((i+1)+"");
     cc.setObject((i+1), null);
     cc.registerOutParameter((i+1), Types.REF_CURSOR);
+    apiInfo.setSequence(i+1);
   }
   else{
     //System.out.println("getParam xx: "+p.getParam().toLowerCase());
     if(p.getArgument_name().toLowerCase().equals("sess_userid")){
       cc.setObject((i+1), sess_userid);
-    p.setCc_seq((i+1)+"");
     }
     else if(p.getArgument_name().toLowerCase().equals("sess_id")){
       cc.setObject((i+1), sess_id);
-    p.setCc_seq((i+1)+"");
     }
     else{
       cc.setObject((i+1), p.getBindValue());
-    p.setCc_seq((i+1)+"");
     }
   }
   i++;
 }
 
+log.info("before execute");
 cc.execute();
 
-int pcnt = list.size();
 
-				rs = cc.getObject( pcnt, ResultSet.class);
+				rs = cc.getObject( apiInfo.getSequence(), ResultSet.class);
 
 				con.setAutoCommit(true);
   log.info("rs {}", rs);
@@ -203,12 +210,15 @@ int pcnt = list.size();
   List rslist = convertList(rs);
 
   
+    jo.addProperty("excuteRowCnt", rslist.size());	
+
     JsonArray data_jobj = (JsonArray)JsonParser.parseString(new Gson().toJson(rslist));
 
     jo.add("data", data_jobj);
 
 
 
+  log.info("data load ");
 
 }
 catch(Exception eeee){
@@ -245,8 +255,7 @@ finally {
 
 
     jo.addProperty("outputExsit", true);
-    jo.addProperty("excuteRowCnt", list.size());	
-    jo.addProperty("pstr", m_procName);
+    //jo.addProperty("pstr", m_procName);
 
 		jo.addProperty("projectName", "preword");
 		jo.addProperty("author", "hello-bryan");
@@ -268,9 +277,12 @@ finally {
 
     jo.addProperty("exectime", diff);
 
-    JsonArray jobj = (JsonArray)JsonParser.parseString(new Gson().toJson(list));
+    String xxxx = new Gson().toJson(apiInfo);
+    log.info("xxx : {}", xxxx);
 
-    jo.add("piinfo", jobj);
+    JsonObject jobj2 = (JsonObject)JsonParser.parseString(xxxx);
+    JsonArray jobj = (JsonArray)JsonParser.parseString(new Gson().toJson(apiInfo.getPis()));
+    jo.add("piinfo", jobj2);
 
 		return jo;
 	}

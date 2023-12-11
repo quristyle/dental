@@ -5,12 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class proc_info {
+public class ProcInfo {
   String argument_name;
   String in_out;
   String data_type;
   String bindValue;
-  String package_name;
+  //String package_name;
   String sequence;
-  String cc_seq;
 }
