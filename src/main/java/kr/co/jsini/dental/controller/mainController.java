@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class mainController {
+public class MainController {
 	
     
-	@RequestMapping("/{id}")
+	@RequestMapping("/page/{id}")
 	public String mainPage(Model model, @PathVariable(value = "id", required = false) String id) {
         model.addAttribute("data", ""+id);
 		return "content/"+id;

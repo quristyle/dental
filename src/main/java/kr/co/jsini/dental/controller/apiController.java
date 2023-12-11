@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import kr.co.jsini.dental.service.ApiService;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
-public class apiController {
+public class ApiController {
 	
     /*
 	@RequestMapping("/api")
@@ -26,34 +31,18 @@ public class apiController {
 	}
     */
 
+	@Autowired
+	private ApiService apiService;
+
 	@RequestMapping("/api")
 	public Object projectInfo(Model model, @RequestParam Map<String, String> params) {
+		
+		log.info("model : {} ", model);		
+		log.info("params : {} ", params);
 
-		// HashMap hm = new HashMap<>();
-		// hm.put("proc", "aaaaaaaaaaa");
-		// hm.put("pi", "bbbbbbbbbb");		
-		// hm.put("sc", "ccccccccccc");
+		JsonObject jo = apiService.getProjectInfo(params);
 
-		// return hm;
-
-
-
-JsonObject jo = new JsonObject();
-
-		jo.addProperty("projectName", "preword");
-		jo.addProperty("author", "hello-bryan");
-		jo.addProperty("createdDate", new Date().toString());
-
-		JsonArray ja = new JsonArray();
-		for (int i = 0; i < 5; i++) {
-			JsonObject jObj = new JsonObject();
-			jObj.addProperty("prop" + i, i);
-			ja.add(jObj);
-		}
-
-		jo.add("follower", ja);
-
-		return jo.toString();
+		return jo;
 
 	}
 	
