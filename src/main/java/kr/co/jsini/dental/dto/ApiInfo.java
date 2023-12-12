@@ -13,5 +13,8 @@ public class ApiInfo {
   String procedule_name;
   String proceStr;
   int sequence;
+  int errCode;
+  String errMsg;
+  String errMsgDesc;
   List<ProcInfo> pis;
 }
