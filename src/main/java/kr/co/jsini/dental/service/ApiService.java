@@ -204,6 +204,8 @@ public class ApiService {
 
     JsonObject jobj = (JsonObject) JsonParser.parseString(new Gson().toJson(apiInfo));
     jo.add("piinfo", jobj);
+    jo.addProperty("code", apiInfo.getErrCode());
+    jo.addProperty("message", apiInfo.getErrMsgDesc());
 
 
     return jo;

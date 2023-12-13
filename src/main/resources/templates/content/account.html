@@ -14,14 +14,19 @@ var listTable_db = null;
 function f_last(){
 
     listTable_db = $('.acct_table').tblInit('f:acct_id|w:150|e:input|t:acct_id'
-                                         +',f:user_id|w:200|t:user_id'
-                                         +',f:user_nm|w:200|e:input|a:l|t:user_nm'
-                                         //, 'h:50%|edt:actionEdited'
-                                         //+'|proc:dt.account.list|proc_save:dt.account.save|sform:srch_form|btns:saved|key=acct_id'
+                                         + ',f:user_id|w:200|t:user_id'
+                                         + ',f:user_nm|w:200|e:input|a:l|t:user_nm'
+                                         , 'h:50%|edt:actionEdited'
+                                         + '|proc:dt.account.list|proc_save:dt.account.save|sform:srch_form|btns:saved|key=acct_id'
                                          );
 
 
+$('.btn-srch').on('click', function(e){
+    listTable_db.dataLoad();
+});
+
 };
+
 
 
   </script>
@@ -34,10 +39,19 @@ function f_last(){
 
      <!-- account list -->
      <div class="row">
-        <div class="col-xl-12 ">
+        <div class="col-xl-12  ">
 
-            <h4 class="">Financial management review</h4>
-            <div class="acct_table"></div>
+            <div class="card">
+                <div class="bun-group">
+                    <button class="btn btn-srch">search</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h4 class="">Financial management review</h4>
+                
+                <div class="acct_table"></div>
+            </div>
 
         </div>
     </div>

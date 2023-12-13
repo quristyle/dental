@@ -1,10 +1,25 @@
 function exsit_val (val){  if( val == null || val == undefined){ return false; } return true; }
 function isempty (val){  if( val == '' || !exsit_val(val)){ return true; } return false; }
 function isempty_trim (str){  val2 = str.trim(); if( val2 == '' || !exsit_val(val2)){ return true; } return false; }
+function f_resize(){	
+	$(window).trigger('resize');  
+	setTimeout(() => {$(window).trigger('resize');  
+		setTimeout(() => {$(window).trigger('resize');  
+		//console.log('resize call.......'); 
+		}, 1000);
+	}, 500);
+}
 
 // Tabulator 그리드 생성 객체
 $.fn.tblInit = function( colinfos, appFns ){
-  var tobj = $(this);
+  //var tobj = $(this);
+  var tobj = this;
+
+  console.log('this :', this);
+  console.log('tobj :', tobj);
+  console.log('selector :', tobj.selector);
+
+  
   tobj.seldic = [];
   tobj.seldic_orig = [];
   tobj.seldicFilter = [];
@@ -614,13 +629,13 @@ $.fn.tblInit = function( colinfos, appFns ){
   
   //// search:false,add:false,copy:false,delete:false,save:false,export:false
   var footer_str = '';
-  footer_str += '<div class="btn-group  grdfootbtn">';
-  if(TabuInfo.isBtns.search) {	footer_str += '<button class="grdBtn btn-srch" t="srch" title="조회" >조회</button>';};
-  if(TabuInfo.isBtns.add) {	footer_str += '<button class="grdBtn btn-add" t="add" title="추가" >추가</button>';};
-  if(TabuInfo.isBtns.copy) {	footer_str += '<button class="grdBtn btn-copy" t="copy" title="복사" >복사</button>';};
-  if(TabuInfo.isBtns.save) {	footer_str += '<button class="grdBtn btn-save" t="save" title="저장" >저장</button>';};
-  if(TabuInfo.isBtns.delete) {	footer_str += '<button class="grdBtn btn-delete" t="delete" title="삭제" >삭제</button>';};
-  if(TabuInfo.isBtns.export) {	footer_str += '<button class="grdBtn btn-export" t="down" title="엑셀" >엑셀</button>';};
+  footer_str += '<div class="btn-group grdfootbtn">';
+  if(TabuInfo.isBtns.search) {	footer_str += '<button class="btn btn-primary btn-srch" t="srch" title="조회" >조회</button>';};
+  if(TabuInfo.isBtns.add) {	footer_str += '<button class="btn btn-primary btn-add" t="add" title="추가" >추가</button>';};
+  if(TabuInfo.isBtns.copy) {	footer_str += '<button class="btn btn-primary btn-copy" t="copy" title="복사" >복사</button>';};
+  if(TabuInfo.isBtns.save) {	footer_str += '<button class="btn btn-primary btn-save" t="save" title="저장" >저장</button>';};
+  if(TabuInfo.isBtns.delete) {	footer_str += '<button class="btn btn-primary btn-delete" t="delete" title="삭제" >삭제</button>';};
+  if(TabuInfo.isBtns.export) {	footer_str += '<button class="btn btn-primary btn-export" t="down" title="엑셀" >엑셀</button>';};
   footer_str += '</div>';
   TabuInfo.footerElement = footer_str;
   
@@ -628,7 +643,8 @@ $.fn.tblInit = function( colinfos, appFns ){
   console.log("tobj selector:", tobj.selector);
   console.log("TabuInfo :", TabuInfo);
   
-  var tmpTB = new Tabulator (tobj.selector, TabuInfo);
+  //var tmpTB = new Tabulator (tobj.selector, TabuInfo);
+  var tmpTB = new Tabulator (tobj.get(0), TabuInfo);
   
   console.log("tmpTB :", tmpTB);
 
@@ -696,6 +712,7 @@ $.fn.tblInit = function( colinfos, appFns ){
   }
   
   
+  console.log("tmpTB.dataLoad : set");
   
   tmpTB.dataLoad = function( callback_fn ){	
     console.log('call dataLoad');
@@ -939,3 +956,13 @@ $.fn.tblInit = function( colinfos, appFns ){
   return tmpTB;
   
   } // tblInit end..
+
+
+
+
+
+
+
+
+
+

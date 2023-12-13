@@ -4384,7 +4384,15 @@ textarea.is-invalid.tt-hint {
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out; }
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out; 
+
+  
+    /* btn 의 기본 색감 */
+    color: #000;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+
+}
   @media (prefers-reduced-motion: reduce) {
     .btn, .ajax-upload-dragdrop .ajax-file-upload {
       -webkit-transition: none;
@@ -4400,7 +4408,9 @@ textarea.is-invalid.tt-hint {
   fieldset:disabled .ajax-upload-dragdrop .ajax-file-upload,
   .ajax-upload-dragdrop fieldset:disabled .ajax-file-upload {
     pointer-events: none;
-    opacity: 0.65; }
+    opacity: 0.65; 
+
+}
 
 .btn-primary {
   color: #fff;
