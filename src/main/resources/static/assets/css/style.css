@@ -4388,9 +4388,12 @@ textarea.is-invalid.tt-hint {
 
   
     /* btn 의 기본 색감 */
-    color: #000;
-    background-color: #f8f9fa;
-    border-color: #f8f9fa;
+    color: #fff;
+    background-color: #3e4b5b;
+    border-color: #3e4b5b;
+
+
+
 
 }
   @media (prefers-reduced-motion: reduce) {
@@ -15624,5 +15627,7 @@ dl {
     z-index: 1030;
     top: 0;
     left: 0;
-    right: 0; } }
+    right: 0; } 
+  }
+
 

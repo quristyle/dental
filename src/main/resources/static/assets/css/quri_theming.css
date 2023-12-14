@@ -1,30 +1,60 @@
 /*quri Theme the Tabulator element*/
 
-.tabulator {
+/* .tabulator {
   background-color:#ccc;
   border: 1px solid #333;
   border-radius: 3px;
-}
+} */
 
 /*Theme the header*/
-.tabulator .tabulator-header {
+/* .tabulator .tabulator-header {
   background-color:#333;
   color:#fff;
-}
+} */
 
 /*Allow column header names to wrap lines*/
-.tabulator-header .tabulator-col,
+/* .tabulator-header .tabulator-col,
 .tabulator-header .tabulator-col-row-handle {
   white-space: normal;
-}
+} */
 
 /*Color the table rows*/
-.tabulator-tableHolder .tabulator-table .tabulator-row{
+/* .tabulator-tableHolder .tabulator-table .tabulator-row{
   color:#fff;
   background-color: #666;
-}
+} */
 
 /*Color even rows*/
-.tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+/* .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
   background-color: #444;
+} */
+
+
+/* tabulator */ 
+
+.tabulator {
+  width: 100%;
+  margin: unset;
+  border: unset;
+  box-shadow: none;
+  border-radius: unset;
+  color: rgba(0,0,0,.87);
+}
+
+
+.tabulator-row .tabulator-cell {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: "Open Sans", sans-serif;
+}
+
+
+
+/*page navigation*/
+
+.page-nav{
+
+  justify-content: space-between;
+  display: flex;
+
 }

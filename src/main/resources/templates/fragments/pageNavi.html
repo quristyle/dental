@@ -3,13 +3,27 @@
 <div th:fragment="pageNaviFragment">
 
     <div class="page-header">
-        <h3 class="page-title"  th:text="${data}" >Form elements [[${data}]]</h3>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Forms [[${data}]]</a></li>
-            <li class="breadcrumb-item active" aria-current="page"> Form elements </li>
-            </ol>
-        </nav>
+
+        <div class="page-nav">
+
+            <h3 class="page-title" th:text="${data}" >Form elements [[${data}]]</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Forms [[${data}]]</a></li>
+                <li class="breadcrumb-item active" aria-current="page"> Form elements </li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="breadcrumb">
+            <div class="btn-group page_btn_div">
+                <button class="btn btn-srch">search</button>
+                <button class="btn btn-add">add</button>
+                <button class="btn btn-save">save</button>
+                <button class="btn btn-delete">delete</button>
+                <button class="btn btn-export">export</button>
+            </div>
+        </div>
     </div>
 
 </div>

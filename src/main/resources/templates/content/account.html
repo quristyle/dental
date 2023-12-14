@@ -16,7 +16,7 @@ function f_last(){
     listTable_db = $('.acct_table').tblInit('f:acct_id|w:150|e:input|t:acct_id'
                                          + ',f:user_id|w:200|t:user_id'
                                          + ',f:user_nm|w:200|e:input|a:l|t:user_nm'
-                                         , 'h:50%|edt:actionEdited'
+                                         , 'h:100%|edt:actionEdited'
                                          + '|proc:dt.account.list|proc_save:dt.account.save|sform:srch_form|btns:saved|key=acct_id'
                                          );
 
@@ -27,9 +27,7 @@ $('.btn-srch').on('click', function(e){
 
 };
 
-
-
-  </script>
+</script>
 
 
 
@@ -40,89 +38,14 @@ $('.btn-srch').on('click', function(e){
      <!-- account list -->
      <div class="row">
         <div class="col-xl-12  ">
-
-            <div class="card">
-                <div class="bun-group">
-                    <button class="btn btn-srch">search</button>
-                </div>
-            </div>
             
-            <div class="card">
-                <h4 class="">Financial management review</h4>
-                
+            <div class="card h-100">
                 <div class="acct_table"></div>
             </div>
 
         </div>
     </div>
 
-
-        <!-- table row starts here -->
-        <div class="row">
-            <div class="col-xl-12 stretch-card grid-margin">
-            <div class="card">
-                <div class="card-body pb-0">
-                <h4 class="card-title">Financial management review</h4>
-                </div>
-                <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table custom-table text-dark">
-                    <thead>
-                        <tr>
-                        <th>Name</th>
-                        <th>Sale Rate</th>
-                        <th>Actual</th>
-                        <th>Variance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <td>
-                            <img src="../assets/images/faces/face2.jpg" class="me-2" alt="image" /> Jacob Jensen 
-                        </td>
-                        <td>
-                            <div class="d-flex">
-                            <span class="pe-2 d-flex align-items-center">85%</span>
-                            <select id="star-1" name="rating" autocomplete="off">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            </div>
-                        </td>
-                        <td>32,435</td>
-                        <td>40,234</td>
-                        </tr>
-                        <tr>
-                        <td>
-                            <img src="../assets/images/faces/face3.jpg" class="me-2" alt="image" /> Cecelia Bradley 
-                        </td>
-                        <td>
-                            <div class="d-flex">
-                            <span class="pe-2 d-flex align-items-center">55%</span>
-                            <select id="star-2" name="rating" autocomplete="off">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            </div>
-                        </td>
-                        <td>4,36780</td>
-                        <td>765728</td>
-                        </tr>
-                      
-                    </tbody>
-                    </table>
-                </div>
-                <a class="text-black d-block ps-4 pt-2 pb-2 pb-lg-0 font-13 font-weight-bold" href="#">Show more</a>
-                </div>
-            </div>
-            </div>
-        </div>
 
 </div>
 </html>
