@@ -14781,7 +14781,9 @@ dl {
   margin-left: auto;
   margin: auto;
   padding: 22px 0.937rem;
-  min-height: calc(100vh - 161px); }
+  /* min-height: calc(100vh - 161px);  */
+  min-height: calc(100vh - 173px); 
+}
 
 .container-scroller .page-body-wrapper {
   background: #f8f9fb;
