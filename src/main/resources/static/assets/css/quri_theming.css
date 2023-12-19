@@ -58,3 +58,34 @@
   display: flex;
 
 }
+
+
+
+
+.alert_container{
+  position: absolute;
+  /* top: 100px; */
+  right: 1rem;
+  text-align: right;
+  bottom: 0;
+  font-size: 0.875rem;
+    font-weight: 600;
+    font-family: "Open Sans", sans-serif;
+}
+
+.alert {
+  padding: 0.5rem 1rem;
+  z-index: 999;
+}
+
+
+.alert > div {
+  margin-right: 1rem;
+}
+
+
+
+.alert-dismissible .btn-close {
+  padding: 0.65rem 0.5rem;
+  background-size: 8px;
+}

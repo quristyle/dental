@@ -16,8 +16,8 @@ function f_last(){
     listTable_db = $('.acct_table').tblInit('f:acct_id|w:150|e:input|t:acct_id'
                                          + ',f:user_id|w:200|t:user_id'
                                          + ',f:user_nm|w:200|e:input|a:l|t:user_nm'
-                                         , 'h:500|edt:actionEdited'
-                                         + '|proc:dt.account.list|proc_save:dt.account.save|sform:srch_form|btns:saved|key=acct_id'
+                                         , 'h:600|edt:actionEdited'
+                                         + '|proc:dt.account.list|proc_save:dt.account.save|sform:srch_form|btns:savedc|key=acct_id'
                                          );
 
                                          
@@ -27,11 +27,27 @@ function f_last(){
 
 };
 
-
-function f_search(){
-    listTable_db.dataLoad();
+function f_per_search(){
+    return true;
 }
 
+function f_search(){
+    //listTable_db.dataLoad();
+    console.log('debugger');
+    // debugger;
+    f_01();
+}
+
+function f_01(){
+    // debugger;
+    f_02();
+
+}
+
+function f_02(){
+    listTable_db.dataLoad();
+    // debugger;
+}
 
 </script>
 

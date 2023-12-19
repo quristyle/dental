@@ -1,56 +1,30 @@
-_baseGoin = '/temps/default_user.png';
-_baseGoin_m = '/temps/user_profile.png';
-_baseGoin_w = '/temps/user_profile_w.png';
 
-
-function search(pnm, formid, prams, fn_callback, isSync){
-  var result = null;
-  if( isSync == undefined || isSync == null ){ isSync = true;}
-  //var pQuery = getParamStr(pnm, formid, prams);
-	
-
-  //var fid = $("form[name='"+formid+"'");
-  //var postDataPram = fid.serializeArray();
-
-
-  var postDataPram = serialize("form[name='"+formid+"'");
-
-	if( !isempty(prams)){
-    postDataPram += '&'+prams;
-	}
-  $.ajax({
-		url : '/fr3.jsp?p='+pnm
-        , type : 'post'
-        , async: isSync
-        , data : postDataPram
-        , datatype : "json"
-        , timeout: 100000
-        , beforesend:function(){}
-        , complete:function(){}
-        , success : function(data, a, b){   
-            console.log( data );            
-            if( data.piinfo.errCode < 0 ){
-              showAlert('danger',data.result.desc , true);
-            }
-            else{
-              if( fn_callback ){
-                fn_callback( data.data );
-              } 
-              result = data.data;
-            }
-          }  
-        , error : function(request,status,error){
-            showAlert('danger',"code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error, true );
-            //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-          }
-        , fail : function() {
-            showAlert('danger',"상태를 확인필요.", true);
-          }
-  });
-  return result;
+// caller 추적
+function f_callerView( cls ){
+  var rst = '';
+  if(cls != null){
+    //console.log('cls name : ', cls.name);
+    //console.log('cls : ', cls);
+    var rst2 = '';
+    if( isempty( cls.name )){
+      
+    }
+    else{
+      rst2 = cls.name+' > ';
+    }
+    rst = f_callerView(cls.caller)+rst2;
+  }
+  return rst;
 }
 
 function excute(pnm, formid, prams, fn_callback, isSync){
+
+  //console.log('excute cls path : ----------------------------------------start ');
+  var clsPath = f_callerView(excute.caller);
+  console.log('excute path : ', clsPath +'excute');
+
+//debugger;
+
   var result = null;
   if( isSync == undefined || isSync == null ){ isSync = true;}
   //var pQuery = getParamStr(pnm, formid, prams);
@@ -64,7 +38,7 @@ function excute(pnm, formid, prams, fn_callback, isSync){
     postDataPram = serialize("form[name='"+formid+"'");
     $("form[name='"+formid+"'").find('.disshow').attr("disabled", "disabled");
 
-    console.log('postDataPram', postDataPram);
+    //console.log('postDataPram', postDataPram);
 
 		if( prams != null){
 			postDataPram.push({name:'TBL_DATA', value:JSON.stringify(prams)});
@@ -91,16 +65,15 @@ function excute(pnm, formid, prams, fn_callback, isSync){
         , success : function(data, a, b){   
             console.log( data );
             
-            if( data.piinfo.errCode < 0 ){
+            if( data.code < 0 ){
               //alert( data.result.desc);
 
               //var alert_div = '<div class="alert alert-danger alert-dismissable fade show"><button class="close" data-dismiss="alert">&times;</button>'+data.result.desc+'&nbsp;&nbsp;&nbsp;</div>';
 
               //$('.alert_container').append(alert_div);
 
-              console.log('error :', data.result);
-              console.log('error detail:', data.result.detail);
-              showAlert('danger',data.result.desc , true);
+              console.log('error detail:', data.message);
+              showAlert('danger',data.message , true);
 
               // if( fn_callback ){
               //   fn_callback( data );
@@ -239,41 +212,26 @@ function generateUUID() {
 // iframe 안의 메시지
 function showAlert( alertType, message, isFiexd) {
   
-  var msg = {alertType:alertType, message:message, isFiexd:isFiexd};
-  try{
-  f_actionFn(parent, 'showAlert2', msg);
-  }
-  catch(ee){
-    showAlert2(msg);
-  }
-  return;
+
   var alertId = 'alert_'+generateUUID();
-
-  //console.log('showAlert', alertId);
-
   var alert_container = $('.alert_container');
   if(alert_container.length <= 0){
-    
-    //console.log('showAlert alert_container 찾지 못함 :', alertId);
-
-    alert_container = $('.alert_container', parent.document);
+    $('body').append('<div class="alert_container"></div>');
+    alert_container = $('.alert_container');
   }
 
-  alert_container.append('<div class="alert alert-' + alertType + '" id="' + alertId + '">' + message + '&nbsp;&nbsp;&nbsp;<button class="close" data-dismiss="alert">&times;</button></div>');
+  alert_container.append('<div class="alert alert-dismissible alert-' + alertType + '" id="' + alertId + '" role="alert" ><div>'+message+'</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
 
   $("#" + alertId).alert();
-	//$("#" + alertId).modal('show');
-  if( isFiexd ){
-
-    //console.log('showAlert isFiexd :', isFiexd);
-  }else{
-    
+  if( isFiexd && 1==2 ){
+    console.log('showAlert isFiexd :', isFiexd);
+  }else{    
     //console.log('showAlert 지우기 settimeout', alertId);
-
     window.setTimeout(function () { 
       //console.log('showAlert setTimeout1 :', alertType);
       if( alertType != 'danger'){
-        $("#" + alertId, alert_container).alert('close'); 
+        console.log('showAlert colseing 1 ');
+        //$("#" + alertId, alert_container).alert('close'); 
       }
       //$("#" + alertId, alert_container).alert('close'); // 테스트 끝나면 주석 풀기 quri
     }, 3000);
@@ -281,10 +239,11 @@ function showAlert( alertType, message, isFiexd) {
     window.setTimeout(function () { 
       //console.log('showAlert setTimeout2 :', alertType);
       if( alertType == 'danger'){
-        $("#" + alertId, alert_container).alert('close'); 
+        console.log('showAlert colseing 1 ');
+        //$("#" + alertId, alert_container).alert('close'); 
       }
       //$("#" + alertId, alert_container).alert('close'); // 테스트 끝나면 주석 풀기 quri
-    }, 15000);
+    }, 10000);
 
   }
 

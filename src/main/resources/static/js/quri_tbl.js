@@ -639,14 +639,16 @@ $.fn.tblInit = function( colinfos, appFns ){
   footer_str += '</div>';
   TabuInfo.footerElement = footer_str;
   
-  console.log("tobj :", tobj);
-  console.log("tobj selector:", tobj.selector);
-  console.log("TabuInfo :", TabuInfo);
+  //console.log("tobj :", tobj);
+  //console.log("tobj selector:", tobj.selector);
+  //console.log("TabuInfo :", TabuInfo);
   
   //var tmpTB = new Tabulator (tobj.selector, TabuInfo);
   var tmpTB = new Tabulator (tobj.get(0), TabuInfo);
+  tmpTB.selector = tobj.get(0);
   
-  console.log("tmpTB :", tmpTB);
+  //console.log("tmpTB tobj.get(0) :", tobj.get(0));
+  //console.log("tmpTB ----------------------------- :", tmpTB);
 
   tmpTB.myObj = tobj;
   tmpTB.opt = TabuInfo;
@@ -707,31 +709,31 @@ $.fn.tblInit = function( colinfos, appFns ){
       clearInterval(tmpTB.loadDataLoadComplate);
       setTimeout(function(){
       tmpTB.dataLoad(callback_fn);
-      },500);
+      },1);
     }
   }
   
   
-  console.log("tmpTB.dataLoad : set");
+  //console.log("tmpTB.dataLoad : set");
   
-  tmpTB.dataLoad = function( callback_fn ){	
-    console.log('call dataLoad');
-    console.log('tmpTB.initialized : '+tmpTB.initialized);
+  tmpTB.dataLoad = function dataLoad( callback_fn ){	
+    //console.log('call dataLoad');
+    //console.log('tmpTB.initialized : '+tmpTB.initialized);
     $('.lds-dual-ring', tmpTB.selector).css('display', 'block');
   
     if(tmpTB.initialized){
     }
     else{
       tmpTB.loadDataLoadComplate = setInterval(function(){
-        console.log('loadDataLoadComplate'+tmpTB.selector+'___________'+tmpTB.initialized);
+        //console.log('loadDataLoadComplate'+tmpTB.selector+'___________'+tmpTB.initialized);
         tmpTB.loadDataLoadComplateCheck(callback_fn);
-      }, 500);    
+      }, 1);    
       return;
     }
   
   
         $('.lds-dual-ring', tmpTB.selector).css('display', 'block');
-        console.log('call dataLoad setTimeout');
+        //console.log('call dataLoad setTimeout');
         if( tmpTB.initialized ){
           tmpTB.clearData();
         }
@@ -745,7 +747,7 @@ $.fn.tblInit = function( colinfos, appFns ){
         
     $('.lds-dual-ring', tmpTB.selector).css('display', 'block');
         excute(tmpTB.opt.procName, tmpTB.opt.formid, appendParams, function( jdata ){
-          console.log('dataload searchCallback '+tmpTB.initialized);
+          //console.log('dataload searchCallback '+tmpTB.initialized);
           if( tmpTB.initialized ){
             tmpTB.setData(jdata.data); 
   
@@ -757,9 +759,9 @@ $.fn.tblInit = function( colinfos, appFns ){
             $('.lds-dual-ring', tmpTB.selector).css('display', 'none');
           }
           else{
-            console.log('dataload searchCallback init fail');
+            //console.log('dataload searchCallback init fail');
             setTimeout(function(){
-              console.log('dataload searchCallback settime out : '+tmpTB.initialized);
+              //console.log('dataload searchCallback settime out : '+tmpTB.initialized);
               tmpTB.setData(jdata.data); 
               if( callback_fn != null ){
                 callback_fn();
@@ -777,7 +779,7 @@ $.fn.tblInit = function( colinfos, appFns ){
     var data = tmpTB.searchData("tbl_cb", "keywords", "I U D", {matchAll:true}); // 수정대상 데이터 
     excute(tmpTB.opt.procSaveName, tmpTB.opt.saveformid, data, function( jdata ){ 
   
-      if(jdata.result.code >= 0 ){
+      if(jdata.code >= 0 ){
         if(!isempty(tmpTB.opt.rowkey) ){
   
           var jrd = jdata.result.pisData; // 저장후 mapkey      
@@ -798,12 +800,11 @@ $.fn.tblInit = function( colinfos, appFns ){
           });
   
         }			
-        showAlert( 'success', '저장 되었습니다.', false);
+        showAlert( 'success', 'Saved', false);
         
         var delRows = tmpTB.searchRows("tbl_cb", "keywords", "D", {matchAll:true}) // 해당 그리드 데이터
         tmpTB.deleteRow(delRows);
       }
-  
       //
     //tmpTB.deleteRow(selectedRows);
   
@@ -861,60 +862,13 @@ $.fn.tblInit = function( colinfos, appFns ){
   }
   
   
-  tmpTB.selector = tobj.selector;
-  
+  //debugger;
   
   tmpTB.loadCompfn = function(){
   
-    /*
-    $('.tabulator-paginator', tmpTB.selector).empty();
-    $('.tabulator-paginator', tmpTB.selector).append('<button class="btn btn-sm btn-info btn-srch">Srch</button>')
-    //if(!tmpTB.opt.isBtns) {return;}
-    //tobj.selector
-    //console.log( tobj.selector );
-    if(tmpTB.opt.isBtns) {
-    $('.tabulator-paginator', tmpTB.selector).append('<button class="btn btn-sm btn-primary btn-add">add</button>');
-    $('.tabulator-paginator', tmpTB.selector).append('<button class="btn btn-sm btn-danger btn-save">save</button>');
-    $('.tabulator-paginator', tmpTB.selector).append('<button class="btn btn-sm btn-danger btn-del">Delete</button>');
-    $('.tabulator-paginator', tmpTB.selector).append('<button class="btn btn-sm btn-info btn-down">down</button>');	
-    }
-  
-    $('.tabulator-paginator .btn-add', tmpTB.selector).on('click', function(){
-      tmpTB.newRow();
-    });
-    $('.tabulator-paginator .btn-del', tmpTB.selector).on('click', function(){
-      tmpTB.selectedRowDel();
-    });
-    $('.tabulator-paginator .btn-down', tmpTB.selector).on('click', function(){
-      tmpTB.download("xlsx", "data.xlsx", {sheetName:"My Data"});
-    });
-    $('.tabulator-paginator .btn-srch', tmpTB.selector).on('click', function(){
-      tmpTB.dataLoad();
-    });
-    $('.tabulator-paginator .btn-save', tmpTB.selector).on('click', function(){
-      tmpTB.save();
-    });
-  
-  */
-  
-  
-  // $('.btn-add', tmpTB.selector).on('click', function(){
-  // 	tmpTB.newRow();
-  // });
-  // $('.btn-del', tmpTB.selector).on('click', function(){
-  // 	tmpTB.selectedRowDel();
-  // });
-  // $('.btn-down', tmpTB.selector).on('click', function(){
-  // 	tmpTB.download("xlsx", "data.xlsx", {sheetName:"My Data"});
-  // });
-  // $('.btn-srch', tmpTB.selector).on('click', function(){
-  // 	tmpTB.dataLoad();
-  // });
-  // $('.btn-save', tmpTB.selector).on('click', function(){
-  // 	//tmpTB.save();
-  // 	alert('xxxxxxxxxxx');
-  // });
-  $(document).on('click', tmpTB.selector+' .grdfootbtn button', function(){
+  //$(document).on('click', tmpTB.selector+' .grdfootbtn button', function(){
+  $(tmpTB.selector).on('click', ' .grdfootbtn button', function(){
+    console.log('grd footer button');
     var t = $(this).attr('t');
     switch(t){
       case 'save' : tmpTB.save(); break;
@@ -922,6 +876,7 @@ $.fn.tblInit = function( colinfos, appFns ){
       case 'delete' : tmpTB.selectedRowDel(); break;
       case 'down' : tmpTB.download("xlsx", "data.xlsx", {sheetName:"My Data"}); break;
       case 'srch' : tmpTB.dataLoad(); break;
+      case 'copy' : tmpTB.copy(); break;
     }
   });
   
@@ -940,7 +895,7 @@ $.fn.tblInit = function( colinfos, appFns ){
   //tmpTB.initialized
   
   tmpTB.loadComplate = setInterval(function(){
-    console.log('loadComplate'+tmpTB.selector+'___________'+tmpTB.initialized);
+    //console.log('loadComplate'+tmpTB.selector+'___________'+tmpTB.initialized);
     setTimeout(() => {
       tmpTB.loadComplateCheck();		
     }, 100);

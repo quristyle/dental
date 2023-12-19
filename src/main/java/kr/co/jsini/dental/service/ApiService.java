@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -38,12 +40,13 @@ public class ApiService {
   ApiInfo getCallProcName(Map<String, String> params) {
 
     ApiInfo apiinfo = new ApiInfo();
+    apiinfo.setSequence(-1);
 
     // 프로시저명과 파라미터 구하기.
     String pname = params.get("p"); // 프로시저 명
     if (pname == null) {
       apiinfo.setErrCode(-3);
-      apiinfo.setErrMsg("p param not exsit");
+      apiinfo.setErrMsg("p param Not Found");
       return apiinfo;
     }
     String[] pnames = pname.split("\\.");
@@ -90,6 +93,44 @@ public class ApiService {
     apiinfo.setProcedule_name(m_procedureName);
 
     apiinfo.setProceStr(procName);
+
+
+    String tbl_jsonStr = params.get("TBL_DATA");
+    
+      log.info("tbl_jsonStr {}", tbl_jsonStr);
+    
+    if(tbl_jsonStr == null){
+      //objs = new Object[1];
+      //objs[0] = null;
+    }
+    else{
+      JsonArray tblArr = (JsonArray) JsonParser.parseString(tbl_jsonStr);
+
+      log.info("jobj {}", tblArr);
+
+      for(JsonElement je : tblArr){
+        log.info("je : {}", je);
+      }
+
+      //JsonObject tblArr2 = (JsonObject) JsonParser.parseString(tbl_jsonStr);
+
+      //log.info("jobj2 {}", tblArr2);
+
+      //JSONParser parser = new JSONParser();
+      //Object obj = parser.parse( tbl_jsonStr );
+      //JSONArray jsonArr = (JSONArray) obj;
+
+      //objs = jsonArr.toArray();
+
+      //for (int i = 0 ; i < objs.length; i++) {
+        //JSONObject jobj = (JSONObject)(objs[i]);
+
+      //}
+
+
+    }
+
+
     apiinfo.setPis(list);
 
     return apiinfo;
@@ -124,7 +165,9 @@ public class ApiService {
 
         int i = 0;
         for (ProcInfo p : apiInfo.getPis()) {
-          if (p.getIn_out().equals("INOUT")) {
+          if (p.getIn_out().equals("INOUT") && p.getData_type().equals("refcursor") ) {
+            log.info("inout found : {}", p);
+            log.info("inout datatype : {}", p.getData_type());
             cc.setObject((i + 1), null);
             cc.registerOutParameter((i + 1), Types.REF_CURSOR);
             apiInfo.setSequence(i + 1);
@@ -144,11 +187,11 @@ public class ApiService {
         log.info("before execute");
         cc.execute();
 
+        if( apiInfo.getSequence() >= 0 ){
         rs = cc.getObject(apiInfo.getSequence(), ResultSet.class);
-
-        con.setAutoCommit(true);
         log.info("rs {}", rs);
 
+        
         List rslist = convertList(rs);
 
         jo.addProperty("excuteRowCnt", rslist.size());
@@ -158,6 +201,15 @@ public class ApiService {
         jo.add("data", data_jobj);
 
         log.info("data load ");
+
+        }
+        else{
+        jo.add("data", new JsonArray());
+
+        }
+
+        con.setAutoCommit(true);
+
 
       } catch (Exception eeee) {
 
