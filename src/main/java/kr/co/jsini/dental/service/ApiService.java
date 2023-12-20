@@ -9,6 +9,7 @@ import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.google.gson.JsonParser;
 
 import kr.co.jsini.dental.dto.ApiInfo;
 import kr.co.jsini.dental.dto.ProcInfo;
+import kr.co.jsini.dental.dto.TblInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -95,48 +97,54 @@ public class ApiService {
     apiinfo.setProceStr(procName);
 
 
+    apiinfo.setPis(list);
+
+
+
+    
     String tbl_jsonStr = params.get("TBL_DATA");
     
-      log.info("tbl_jsonStr {}", tbl_jsonStr);
+    log.info("tbl_jsonStr {}", tbl_jsonStr);
     
     if(tbl_jsonStr == null){
-      //objs = new Object[1];
-      //objs[0] = null;
+      
     }
     else{
       JsonArray tblArr = (JsonArray) JsonParser.parseString(tbl_jsonStr);
 
+      List<TblInfo> tbls = new ArrayList<TblInfo>();
+
       log.info("jobj {}", tblArr);
 
       for(JsonElement je : tblArr){
-        log.info("je : {}", je);
-      }
+        TblInfo tbl = new TblInfo();        
+        //log.info("je : {}", je);
+        
+        HashMap<String, String> hm = new HashMap<String, String>();
+        JsonObject jj = (JsonObject)je;  
+        for( Map.Entry<String, JsonElement> jobj : jj.entrySet() ){
+    
+        //log.info("jobj : {}", jobj);
+        //log.info("jobj getKey: {}", jobj.getKey());
+        //log.info("jobj getValue: {}", jobj.getValue());
+        //hm.put(jobj.getKey(), jobj.getValue().toString());
+        hm.put(jobj.getKey(), jobj.getValue().getAsString());
+        }
+        
+        tbl.setArguments(hm); 
 
-      //JsonObject tblArr2 = (JsonObject) JsonParser.parseString(tbl_jsonStr);
+        tbls.add(tbl);
+      } 
 
-      //log.info("jobj2 {}", tblArr2);
-
-      //JSONParser parser = new JSONParser();
-      //Object obj = parser.parse( tbl_jsonStr );
-      //JSONArray jsonArr = (JSONArray) obj;
-
-      //objs = jsonArr.toArray();
-
-      //for (int i = 0 ; i < objs.length; i++) {
-        //JSONObject jobj = (JSONObject)(objs[i]);
-
-      //}
-
-
+      apiinfo.setTbl_list(tbls);
     }
-
-
-    apiinfo.setPis(list);
 
     return apiinfo;
   }
 
+
   public JsonObject getProjectInfo(Map<String, String> params) {
+
 
     Date startDt = new Date();
 
@@ -163,51 +171,146 @@ public class ApiService {
         log.info("prepareCall : {}", apiInfo.getProceStr());
         cc = con.prepareCall(apiInfo.getProceStr());
 
-        int i = 0;
-        for (ProcInfo p : apiInfo.getPis()) {
-          if (p.getIn_out().equals("INOUT") && p.getData_type().equals("refcursor") ) {
-            log.info("inout found : {}", p);
-            log.info("inout datatype : {}", p.getData_type());
-            cc.setObject((i + 1), null);
-            cc.registerOutParameter((i + 1), Types.REF_CURSOR);
-            apiInfo.setSequence(i + 1);
-          } else {
-            // System.out.println("getParam xx: "+p.getParam().toLowerCase());
-            if (p.getArgument_name().toLowerCase().equals("sess_userid")) {
-              cc.setObject((i + 1), sess_userid);
-            } else if (p.getArgument_name().toLowerCase().equals("sess_id")) {
-              cc.setObject((i + 1), sess_id);
-            } else {
-              cc.setObject((i + 1), p.getBindValue());
+        List<TblInfo> tbllist = apiInfo.getTbl_list();
+        if( tbllist != null  ){ //tbl list 가 존재할때
+
+          for( TblInfo tbl : tbllist ){
+
+            log.info("TblInfo : {}",tbl);
+            log.info("TblInfo hashmap: {}",tbl.getArguments()); 
+            HashMap<String, String> hm = tbl.getArguments();
+            int i = 0;
+            log.info("procinfo loop ---------------------------------------------------------");
+            for (ProcInfo p : apiInfo.getPis()) {
+              
+
+              if (p.getIn_out().equals("INOUT") && p.getData_type().equals("refcursor") ) {
+                log.info("{}.(g) {} : {}",(i + 1), p.getArgument_name(), p.getData_type());
+                //cc.setObject((i + 1), null);
+                      cc.setNull(   (i+1), Types.REF_CURSOR   );
+                cc.registerOutParameter((i + 1), Types.REF_CURSOR);
+                apiInfo.setSequence(i + 1);
+                
+                    //log.info("cc registerOutParameter :{} , REF_CURSOR",(i + 1) ); 
+
+              } 
+              else if (p.getIn_out().equals("INOUT")  ) {
+                log.info("{}.(g_n) {} : null", (i + 1), p.getArgument_name());
+                //cc.setObject((i + 1), null);
+                cc.setNull(   (i+1), Types.VARCHAR   );
+                cc.registerOutParameter((i + 1), Types.VARCHAR);
+                //apiInfo.setSequence(i + 1);
+                
+                    //log.info("cc registerOutParameter :{} , REF_CURSOR",(i + 1) ); 
+
+              }               
+              else {
+                //log.info("procInfo i : {}, {}",(i+1), p.getArgument_name()); 
+                if (p.getArgument_name().toLowerCase().equals("sess_userid")) {
+                  cc.setObject((i + 1), sess_userid);
+                } else if (p.getArgument_name().toLowerCase().equals("sess_id")) {
+                  cc.setObject((i + 1), sess_id);
+                } else {
+                  if( hm.get(p.getArgument_name().toLowerCase()) != null ){
+                    cc.setObject((i + 1), hm.get(p.getArgument_name().toLowerCase()));
+                    log.info("{}.(t) {} : {}",(i + 1),p.getArgument_name(), hm.get(p.getArgument_name().toLowerCase()) );   
+                  }
+                  else{
+
+                    if( p.getBindValue() != null && !p.getBindValue().equals("") ){ // json 외 파라미터로 들어 온것 체크 하고 그래도 없으면 null 처리
+                      cc.setObject((i+1), p.getBindValue());
+                    log.info("{}.(p) {} : {}",(i + 1),p.getArgument_name(), p.getBindValue() ); 
+                    } 
+                    else{           
+                      cc.setNull(   (i+1), Types.VARCHAR   );
+                    log.info("{}.(p_n) {} : {}",(i + 1),p.getArgument_name(), p.getBindValue() ); 
+                    }
+
+                    //cc.setObject((i + 1), p.getBindValue());  
+                  }
+                }
+              }
+              i++;
             }
+
+            log.info("before tbl execute");
+            cc.execute();
+            log.info("after tbl execute");
+
+            i = 0;
+            log.info("return aguments check ---------------------------------------------------------");
+            HashMap<String, String> rhm = new HashMap<String, String>();
+            for (ProcInfo p : apiInfo.getPis()) {
+              if (p.getIn_out().equals("INOUT") && !p.getData_type().equals("refcursor") ) {
+                
+                log.info("rhm xxxx : {} , {} ", (i+1), p.getArgument_name());
+
+                String resultStr = cc.getString((i+1));
+                rhm.put(p.getArgument_name(), resultStr);
+
+                log.info("rhm : {} ", rhm);
+
+              }
+              i++;
+            }
+            tbl.setReturnArguments(rhm);
+
+
           }
-          i++;
-        }
-
-        log.info("before execute");
-        cc.execute();
-
-        if( apiInfo.getSequence() >= 0 ){
-        rs = cc.getObject(apiInfo.getSequence(), ResultSet.class);
-        log.info("rs {}", rs);
-
-        
-        List rslist = convertList(rs);
-
-        jo.addProperty("excuteRowCnt", rslist.size());
-
-        JsonArray data_jobj = (JsonArray) JsonParser.parseString(new Gson().toJson(rslist));
-
-        jo.add("data", data_jobj);
-
-        log.info("data load ");
+          
+          log.info("end tbl loop");
 
         }
         else{
-        jo.add("data", new JsonArray());
+          
+          int i = 0;
+          for (ProcInfo p : apiInfo.getPis()) {
+            log.info("procinfo loop ---------------------------------------------------------");
+
+            if (p.getIn_out().equals("INOUT") && p.getData_type().equals("refcursor") ) {
+              log.info("inout found : {}, {}", p, p.getData_type());
+              cc.setObject((i + 1), null);
+              cc.registerOutParameter((i + 1), Types.REF_CURSOR);
+              apiInfo.setSequence(i + 1);
+            } else {
+              if (p.getArgument_name().toLowerCase().equals("sess_userid")) {
+                cc.setObject((i + 1), sess_userid);
+              } else if (p.getArgument_name().toLowerCase().equals("sess_id")) {
+                cc.setObject((i + 1), sess_id);
+              } else {
+                cc.setObject((i + 1), p.getBindValue());
+              }
+            }
+            i++;
+          }
+
+          log.info("before execute");
+          cc.execute();
 
         }
 
+        log.info("apiInfo.getSequence() : {}", apiInfo.getSequence());
+        if( apiInfo.getSequence() >= 0 ){ // 리턴 커스가 존재할때
+          rs = cc.getObject(apiInfo.getSequence(), ResultSet.class);
+          log.info("rs {}", rs);
+
+          
+          List rslist = convertList(rs);
+
+          jo.addProperty("excuteRowCnt", rslist.size());
+
+          JsonArray data_jobj = (JsonArray) JsonParser.parseString(new Gson().toJson(rslist));
+
+          jo.add("data", data_jobj);
+
+          log.info("data load ");
+
+        }
+        else{
+          jo.add("data", new JsonArray());
+        }
+
+        log.info("setAutoCommit true "); 
         con.setAutoCommit(true);
 
 

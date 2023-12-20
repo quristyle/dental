@@ -14,7 +14,7 @@ var listTable_db = null;
 function f_last(){
 
     listTable_db = $('.acct_table').tblInit('f:acct_id|w:150|e:input|t:acct_id'
-                                         + ',f:user_id|w:200|t:user_id'
+                                         + ',f:user_id|w:200|e:input|t:user_id'
                                          + ',f:user_nm|w:200|e:input|a:l|t:user_nm'
                                          , 'h:600|edt:actionEdited'
                                          + '|proc:dt.account.list|proc_save:dt.account.save|sform:srch_form|btns:savedc|key=acct_id'

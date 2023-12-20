@@ -17,4 +17,5 @@ public class ApiInfo {
   String errMsg;
   String errMsgDesc;
   List<ProcInfo> pis;
+  List<TblInfo> tbl_list;
 }
