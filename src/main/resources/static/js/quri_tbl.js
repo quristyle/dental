@@ -441,7 +441,7 @@ $.fn.tblInit = function( colinfos, appFns ){
     }
   });
   
-  colarr.push({ title: "", headerSort: false,  });// 뒤를 채우기 위함.
+  //colarr.push({ title: "", headerSort: false,  });// 뒤를 채우기 위함.
   
   var TabuInfo = { layout:'fitColumns'
   //, pagination: false // 'local'  //remote
@@ -488,6 +488,10 @@ $.fn.tblInit = function( colinfos, appFns ){
   }
   var apps = appFns.split('|');
   
+
+  //debugger;
+
+
   apps.forEach(function(el, idx){
       //'f:com_gb
       var els = el.split(':');
@@ -560,7 +564,9 @@ $.fn.tblInit = function( colinfos, appFns ){
         break;
         case 'proc_save' : TabuInfo.procSaveName = v;// 데이터 호출에 사용할 프로시저명
         break;
-        case 'key' : TabuInfo.rowkey = v;// 저장후 반환값 반영할 곳.
+        case 'key' : 
+        //debugger;
+        TabuInfo.rowkey = v;// 저장후 반환값 반영할 곳.
         break;
         //rowkey
         case 'sform' : TabuInfo.formid = v;// 데이터 호출에 사용할 파라미터 form
@@ -777,23 +783,30 @@ $.fn.tblInit = function( colinfos, appFns ){
   
   tmpTB.save = function( callback_fn ){	
     var data = tmpTB.searchData("tbl_cb", "keywords", "I U D", {matchAll:true}); // 수정대상 데이터 
+
+    if( data.length <= 0 ){
+      showAlert( 'warning', '저장 항목이 존재하지 않습니다', false);     
+      return; 
+    }
+
     excute(tmpTB.opt.procSaveName, tmpTB.opt.saveformid, data, function( jdata ){ 
   
       if(jdata.code >= 0 ){
+        //debugger;
         if(!isempty(tmpTB.opt.rowkey) ){
   
-          var jrd = jdata.result.pisData; // 저장후 mapkey      
+          var jrd = jdata.piinfo.tbl_list; // 저장후 mapkey      
           var allRows = tmpTB.searchRows("tbl_cb", "keywords", "I", {matchAll:true}) // 해당 그리드 데이터
   
           $.each(jrd, function(j, d ){	// 데이터 loop
           
             $.each(allRows, function(i, __v ){		// gridrow loop
               var v = __v._row.data; // row data
-              if( v.tbl_uuid == d.tbl_uuid){ // 일치하는 row 발견    
-                console.log('일치 발견', d.tbl_uuid);        
-                console.log('key 반영', d.tbl_uuid_out);        
-                v[tmpTB.opt.rowkey] = d.tbl_uuid_out; // row의 key에 데이터 반영.
-                return false; // grid break;
+              if( v.tbl_uuid == d.arguments.tbl_uuid){ // 일치하는 row 발견    
+                console.log('일치 발견', d.arguments.tbl_uuid);        
+                console.log('key 반영', d.returnArguments.tbl_uuid);        
+                v[tmpTB.opt.rowkey] = d.returnArguments.tbl_uuid; // row의 key에 데이터 반영.
+                //return false; // grid break;
               }
             });
   
@@ -869,12 +882,13 @@ $.fn.tblInit = function( colinfos, appFns ){
   //$(document).on('click', tmpTB.selector+' .grdfootbtn button', function(){
   $(tmpTB.selector).on('click', ' .grdfootbtn button', function(){
     console.log('grd footer button');
+    $('.alert_container').empty();
     var t = $(this).attr('t');
     switch(t){
       case 'save' : tmpTB.save(); break;
       case 'add' : tmpTB.newRow(); break;
       case 'delete' : tmpTB.selectedRowDel(); break;
-      case 'down' : tmpTB.download("xlsx", "data.xlsx", {sheetName:"My Data"}); break;
+      case 'down' : tmpTB.download("xlsx", "data.xlsx", {sheetName:"MyData"}); break;
       case 'srch' : tmpTB.dataLoad(); break;
       case 'copy' : tmpTB.copy(); break;
     }

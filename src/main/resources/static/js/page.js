@@ -17,6 +17,9 @@
 $('.page_btn_div').css('display', 'inline-flex');
 
 
+$(document).on('click', '.page_btn_div > button', function (){	  
+  $('.alert_container').empty();
+});	
 
 // button action 이벤트 등록
 $(document).on('click', '.page_btn_div > .btn-srch', function (){		

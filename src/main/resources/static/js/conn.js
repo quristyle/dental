@@ -223,7 +223,7 @@ function showAlert( alertType, message, isFiexd) {
   alert_container.append('<div class="alert alert-dismissible alert-' + alertType + '" id="' + alertId + '" role="alert" ><div>'+message+'</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
 
   $("#" + alertId).alert();
-  if( isFiexd && 1==2 ){
+  if( isFiexd ){
     console.log('showAlert isFiexd :', isFiexd);
   }else{    
     //console.log('showAlert 지우기 settimeout', alertId);
@@ -231,16 +231,16 @@ function showAlert( alertType, message, isFiexd) {
       //console.log('showAlert setTimeout1 :', alertType);
       if( alertType != 'danger'){
         console.log('showAlert colseing 1 ');
-        //$("#" + alertId, alert_container).alert('close'); 
+        $("#" + alertId, alert_container).alert('close'); 
       }
       //$("#" + alertId, alert_container).alert('close'); // 테스트 끝나면 주석 풀기 quri
-    }, 3000);
+    }, 5000);
     
     window.setTimeout(function () { 
       //console.log('showAlert setTimeout2 :', alertType);
       if( alertType == 'danger'){
         console.log('showAlert colseing 1 ');
-        //$("#" + alertId, alert_container).alert('close'); 
+        $("#" + alertId, alert_container).alert('close'); 
       }
       //$("#" + alertId, alert_container).alert('close'); // 테스트 끝나면 주석 풀기 quri
     }, 10000);
