@@ -88,21 +88,27 @@ function excute(pnm, formid, prams, fn_callback, isSync){
             } 
           }  
         , error : function(request,status,error){
+          debugger;
             if(request.status == 0){
-              //showAlert('danger',"code:"+request.status+"\n"+"message:심각한 오류\nerror:"+error, true );
+              showAlert('danger',"처리 실패", true );
             }
             else if(request.status >= 300){
-              //showAlert('danger',"code:"+request.status+"\n"+"message:심각한 오류\nerror:"+error, true );
+              showAlert('danger',"code:"+request.status+"\n"+"message:심각한 오류\nerror:"+error, true );
             }
             else{
               showAlert('danger',""+request.responseText+" "+"error:"+error, true );
             }
             //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
           }
-        , fail : function() {
+        , fail : function(jqXHR, textStatus, errorThrown) {
+          debugger;
             showAlert('danger',"상태를 확인필요.", true);
           }
+  }).fail(function(jqXHR, textStatus, errorThrown){
+    debugger;
+    showAlert('danger',"연결 상태 확인 필요.", true);    
   });
+  
   return result;
 }
 
